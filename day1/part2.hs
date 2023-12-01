@@ -12,7 +12,9 @@ parse = map (concatMap nums . fwd) . lines
 
 nums :: String -> String
 nums [] = []
-nums (x:xs) = if isDigit x then [x] else mapMaybe conv . rev $ (x:xs)
+nums (x:xs) 
+  | isDigit x = [x] 
+  | otherwise = mapMaybe conv . rev $ (x:xs)
 
 conv :: String -> Maybe Char
 conv "one"   = Just '1'
