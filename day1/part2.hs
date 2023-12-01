@@ -11,19 +11,18 @@ parse :: String -> [String]
 parse = map (concatMap (mapMaybe conv . rev) . fwd) . lines
 
 conv :: String -> Maybe Char
-conv xs 
-  | isDigit x     = Just x
-  | xs == "one"   = Just '1'
-  | xs == "two"   = Just '2'
-  | xs == "three" = Just '3'
-  | xs == "four"  = Just '4'
-  | xs == "five"  = Just '5'
-  | xs == "six"   = Just '6'
-  | xs == "seven" = Just '7'
-  | xs == "eight" = Just '8'
-  | xs == "nine"  = Just '9'
-  | otherwise     = Nothing
-  where x = head xs
+conv xs = case xs of 
+  [x] | isDigit x -> Just x
+  "one"           -> Just '1'
+  "two"           -> Just '2'
+  "three"         -> Just '3'
+  "four"          -> Just '4'
+  "five"          -> Just '5'
+  "six"           -> Just '6'
+  "seven"         -> Just '7'
+  "eight"         -> Just '8'
+  "nine"          -> Just '9'
+  _               -> Nothing
 
 rev :: String -> [String]
 rev = map reverse . fwd . reverse
