@@ -1,8 +1,10 @@
 import Data.Char (isDigit)
 
-main = interact $ show . sum . map f . lines
+main :: IO ()
+main = interact $ show . work . parse
 
-f :: String -> Int
-f s = read $ head ds : [last ds]
-      where ds = filter isDigit s
+parse :: String -> [String]
+parse = map (filter isDigit) . lines
 
+work :: [String] -> Int
+work = sum . map (\xs -> read $ head xs: [last xs])
