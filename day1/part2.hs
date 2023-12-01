@@ -1,33 +1,37 @@
 import Data.Char (isDigit)
 import Data.Maybe (mapMaybe)
 
-main :: IO()
+main :: IO ()
 main = interact $ show . work . parse 
 
 work :: [String] -> Int
 work = sum . map (\x -> read $ head x : [last x])
 
 parse :: String -> [String]
-parse = map (concatMap getNum . trav) . lines
+parse = map (concatMap nums . fwd) . lines
 
-getNum :: String -> String
-getNum [] = []
-getNum (x:xs) = if isDigit x then [x] else mapMaybe convert . revtrav $ (x:xs)
+nums :: String -> String
+nums [] = []
+nums (x:xs) = if isDigit x then [x] else mapMaybe conv . rev $ (x:xs)
 
-convert :: String -> Maybe Char
-convert "one"   = Just '1'
-convert "two"   = Just '2'
-convert "three" = Just '3'
-convert "four"  = Just '4'
-convert "five"  = Just '5'
-convert "six"   = Just '6'
-convert "seven" = Just '7'
-convert "eight" = Just '8'
-convert "nine"  = Just '9'
-convert _       = Nothing
+conv :: String -> Maybe Char
+conv "one"   = Just '1'
+conv "two"   = Just '2'
+conv "three" = Just '3'
+conv "four"  = Just '4'
+conv "five"  = Just '5'
+conv "six"   = Just '6'
+conv "seven" = Just '7'
+conv "eight" = Just '8'
+conv "nine"  = Just '9'
+conv _       = Nothing
 
-revtrav :: [Char] -> [[Char]]
-revtrav = map reverse . trav . reverse
+fwd :: [a] -> [[a]] 
+fwd = foldr ex []
 
-trav :: [Char] -> [[Char]]
-trav = foldr (\c acc -> case acc of [] -> [[c]]; (x:xs) -> (c : x) : acc) []
+rev :: [a] -> [[a]]
+rev = map reverse . fwd . reverse
+
+ex :: a -> [[a]] -> [[a]]
+ex c []     = [[c]]
+ex c (x:xs) = (c : x) : (x:xs)
