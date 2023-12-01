@@ -28,12 +28,10 @@ conv "eight" = Just '8'
 conv "nine"  = Just '9'
 conv _       = Nothing
 
-fwd :: [a] -> [[a]] 
-fwd = foldr ex []
-
-rev :: [a] -> [[a]]
+rev :: String -> [String]
 rev = map reverse . fwd . reverse
 
-ex :: a -> [[a]] -> [[a]]
-ex c []     = [[c]]
-ex c (x:xs) = (c : x) : (x:xs)
+fwd :: String -> [String] 
+fwd = foldr (\c acc -> case acc of 
+  []    -> [[c]]
+  (x:_) -> (c:x) : acc ) []
