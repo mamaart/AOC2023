@@ -8,25 +8,22 @@ work :: [String] -> Int
 work = sum . map (\x -> read $ head x : [last x])
 
 parse :: String -> [String]
-parse = map (concatMap nums . fwd) . lines
-
-nums :: String -> String
-nums [] = []
-nums (x:xs) 
-  | isDigit x = [x] 
-  | otherwise = mapMaybe conv . rev $ (x:xs)
+parse = map (concatMap (mapMaybe conv . rev) . fwd) . lines
 
 conv :: String -> Maybe Char
-conv "one"   = Just '1'
-conv "two"   = Just '2'
-conv "three" = Just '3'
-conv "four"  = Just '4'
-conv "five"  = Just '5'
-conv "six"   = Just '6'
-conv "seven" = Just '7'
-conv "eight" = Just '8'
-conv "nine"  = Just '9'
-conv _       = Nothing
+conv xs 
+  | isDigit x     = Just x
+  | xs == "one"   = Just '1'
+  | xs == "two"   = Just '2'
+  | xs == "three" = Just '3'
+  | xs == "four"  = Just '4'
+  | xs == "five"  = Just '5'
+  | xs == "six"   = Just '6'
+  | xs == "seven" = Just '7'
+  | xs == "eight" = Just '8'
+  | xs == "nine"  = Just '9'
+  | otherwise     = Nothing
+  where x = head xs
 
 rev :: String -> [String]
 rev = map reverse . fwd . reverse
