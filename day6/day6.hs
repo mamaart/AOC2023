@@ -1,8 +1,15 @@
+{-# LANGUAGE LambdaCase #-}
+
 import Text.Parsec
 import Text.Parsec.String
+import System.Environment (getArgs)
 
 main :: IO ()
-main = interact $ show . fmap part2 . parse laps ""
+main = getArgs >>= \case 
+    ["part1"] -> run part1
+    ["part2"] -> run part2
+    _ -> print "part1 or part2?"
+    where run f = interact $ (++ "\n") . either show (show . f) . parse laps ""
 
 ------------------ PART 1 ------------------
 
