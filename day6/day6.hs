@@ -6,8 +6,8 @@ import System.Environment (getArgs)
 
 main :: IO ()
 main = getArgs >>= \case 
-    ["part1"] -> run part1
-    ["part2"] -> run part2
+    "part1":_ -> run part1
+    "part2":_ -> run part2
     _ -> print "part1 or part2?"
     where run f = interact $ (++ "\n") . either show (show . f) . parse laps ""
 
