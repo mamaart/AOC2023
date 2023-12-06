@@ -2,13 +2,16 @@
 import Text.Parsec 
 import Text.Parsec.String (Parser)
 import Data.Maybe (mapMaybe)
+import System.Environment (getArgs)
     
 main :: IO ()
-main = interact $ show . part2 . ppparse
+main = getArgs >>= \case 
+  ["part1"] -> run part1
+  ["part2"] -> run part2
+  _ -> print "part1 or part2?"
+  where run f = interact $ (++ "\n") . show . f . ppparse
 
-data Game = Game Int [Color] deriving (Show)
-data Color = R Int | G Int | B Int deriving (Show, Eq)
-data RGB = RGB{ iden :: Int, vals :: (Int, Int, Int)} deriving (Show, Eq)
+------------------ PART 1 ------------------
 
 part1 :: [Game] -> Int
 part1 = sum . map ((\(RGB iden (r, g, b)) -> 
@@ -16,8 +19,12 @@ part1 = sum . map ((\(RGB iden (r, g, b)) ->
   then iden 
   else 0) . toRGB)
 
+------------------ PART 2 ------------------
+
 part2 :: [Game] -> Int
 part2 = sum . map ((\(RGB _ (r,g,b)) -> r*g*b) . toRGB)
+
+------------------ SHARED ------------------
 
 toRGB :: Game -> RGB
 toRGB (Game iden colors) = RGB { iden = iden , vals = (r, g, b)}
@@ -26,7 +33,13 @@ toRGB (Game iden colors) = RGB { iden = iden , vals = (r, g, b)}
         b = max (\case { B x -> x; _ -> 0}) 
         max f = maximum $ map f colors 
 
--- PARSING
+------------------ MODELS ------------------
+
+data Game = Game Int [Color] deriving (Show)
+data Color = R Int | G Int | B Int deriving (Show, Eq)
+data RGB = RGB{ iden :: Int, vals :: (Int, Int, Int)} deriving (Show, Eq)
+
+------------------ PARSER ------------------
 
 ppparse :: String -> [Game]
 ppparse = mapMaybe (pparse game) . lines
