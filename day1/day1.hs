@@ -1,14 +1,24 @@
-import Data.Char (isDigit)
+{-# LANGUAGE LambdaCase #-}
 import Data.Maybe (mapMaybe)
+import Data.Char (isDigit)
+import System.Environment (getArgs)
 
 main :: IO ()
-main = interact $ show . work . parse 
+main = getArgs >>= \case
+  ["part1"] -> run $ part1 . map (filter isDigit) 
+  ["part2"] -> run $ part2 . map (concatMap (mapMaybe conv . rev) . fwd) 
+  _         -> print "part1 or part2?"
+  where run f = interact $ (++ "\n") . show . f . lines
 
-work :: [String] -> Int
-work = sum . map (\x -> read $ head x : [last x])
+------------------ PART 1 ------------------
 
-parse :: String -> [String]
-parse = map (concatMap (mapMaybe conv . rev) . fwd) . lines
+part1 :: [String] -> Int
+part1 = sum . map (\xs -> read $ head xs: [last xs])
+
+------------------ PART 2 ------------------
+
+part2 :: [String] -> Int
+part2 = sum . map (\x -> read $ head x : [last x])
 
 conv :: String -> Maybe Char
 conv xs = case xs of 
