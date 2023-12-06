@@ -1,10 +1,17 @@
+{-# LANGUAGE LambdaCase #-}
+
 import Text.Parsec
 import Text.Parsec.String (Parser)
 import Control.Monad (void)
 import Data.List (foldl')
+import System.Environment (getArgs)
 
 main :: IO ()
-main = interact $ show . fmap part2 . parse almanak "" 
+main = getArgs >>= \case 
+    "part1":_ -> run part1
+    "part2":_ -> run part2
+    _ -> print "part1 or part2?"
+    where run f = interact $ (++ "\n") . show . fmap f . parse almanak "" 
 
 ------------------------ PART ONE ----------------------
 
@@ -28,9 +35,6 @@ f (a, b) maps = go a b
         go acc n = foldl' find acc maps : go (acc+1) (n-1)
 
 ------------------------  SHARED  ----------------------
-
-fx :: [[Map]] -> (Int -> Int)
-fx (xs:xss) = \x -> 0
 
 find :: Int -> [Map] -> Int
 find seed []                       = seed
