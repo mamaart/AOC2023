@@ -1,6 +1,7 @@
 import Text.Parsec
 import Text.Parsec.String
 import Data.List (group, nub, sort)
+import Data.Functor 
 
 main :: IO ()
 main = interact $ either show ((++"\n") . show . part1) . mapM (fmap rawToHand .  parse rawHand "") . lines
@@ -13,8 +14,6 @@ part1 hs = fst . foldr (\(Hand _ _ bid) (acc, i) -> (bid*i + acc,i-1)) (0, lengt
 rawToHand ::RawHand -> Hand 
 rawToHand (RawHand cards bid) = Hand (getType cards) cards bid
 
------------------- SHARED ------------------ 
-
 getType :: Cards -> Type
 getType (Cards a b c d e) 
   | 5 `kind` g               = KindFive
@@ -24,13 +23,11 @@ getType (Cards a b c d e)
   | 2 `pair` g               = TwoPair
   | 1 `pair` g               = Pair
   | otherwise                = High
-  where g = (group . sort) [a, b, c, d, e]
+  where g      = (group . sort) [a, b, c, d, e]
+        pair n = ((==n) . length) . filter ((==2) . length)
+        kind n = any $ (==n) . length
 
-pair :: Int -> [[Rank]] -> Bool
-pair n = ((==n) . length) . filter ((==2) . length)
-
-kind :: Int -> [[Rank]] -> Bool
-kind n = any $ (== n) . length
+------------------  SORT  ------------------ 
 
 instance Ord Hand where 
   ( Hand t1 h1 _ ) `compare` ( Hand t2 h2 _ ) 
@@ -52,52 +49,20 @@ data Cards = Cards Rank Rank Rank Rank Rank deriving (Show, Eq)
 
 data RawHand = RawHand Cards Int deriving (Show)
 
-data Type = High
-          | Pair 
-          | TwoPair 
-          | KindThree 
-          | House 
-          | KindFour
-          | KindFive  deriving (Enum, Show, Eq, Ord)
+data Type = High| Pair | TwoPair | KindThree | House | KindFour | KindFive  deriving (Enum, Show, Eq, Ord)
 
-data Rank = Undefined 
-          | Two 
-          | Three 
-          | Four 
-          | Five 
-          | Six 
-          | Seven 
-          | Eight 
-          | Nine 
-          | Ten 
-          | Jack
-          | Queen 
-          | King 
-          | Ace deriving (Enum, Show, Eq, Ord)
+data Rank = Two | Three | Four | Five | Six | Seven | Eight| Nine | Ten | Jack| Queen | King | Ace deriving (Enum, Show, Eq, Ord)
 
 ------------------ PARSER ------------------ 
 
-conv :: Char -> Rank
-conv '2' = Two
-conv '3' = Three
-conv '4' = Four
-conv '5' = Five
-conv '6' = Six
-conv '7' = Seven
-conv '8' = Eight
-conv '9' = Nine
-conv 'T' = Ten
-conv 'J' = Jack
-conv 'Q' = Queen
-conv 'K' = King
-conv 'A' = Ace
-conv  _  = Undefined
+rank :: Parser Rank
+rank = choice [ char '2' $> Two,  char '3' $> Three, char '4' $> Four, char '5' $> Five
+               ,char '6' $> Six,  char '7' $> Seven, char '8' $> Eight,char '9' $> Nine
+               ,char 'T' $> Ten,  char 'J' $> Jack,  char 'Q' $> Queen
+               ,char 'K' $> King, char 'A' $> Ace,   fail "ivalid rank"]
 
 rawHand :: Parser RawHand
 rawHand = RawHand <$> cards <*> (read <$> many1 digit)
 
 cards :: Parser Cards
 cards = Cards <$> rank <*> rank  <*> rank  <*> rank  <*> rank <* spaces
-
-rank :: Parser Rank 
-rank = conv <$> anyChar 
