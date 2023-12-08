@@ -1,6 +1,12 @@
 # 🎅 Advent of Code 2023
 
-I am trying to solve advent of code this year only with Haskell - mostly using parsec to parse the assignment input.
+I am trying to solve advent of code this year only with [Haskell](https://www.haskell.org/) - mostly using [parsec](https://hackage.haskell.org/package/parsec) for parsing the assignment input.
+
+My goals on top of just solving the assignements are:
+
+- to make a readable and consise solution 
+- with as few lines as possible
+- and no external dependencies except parsec.
 
 ## 🚩Status so far
 
@@ -44,3 +50,7 @@ I am trying to solve advent of code this year only with Haskell - mostly using p
 - [ ] Part 2
 - [ ] Refactor
 - [ ] Benchmark
+
+## Resources
+
+- [Intro to parsing](https://jakewheat.github.io/intro_to_parsing/)
