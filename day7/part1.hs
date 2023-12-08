@@ -9,10 +9,12 @@ main = interact $ either show ((++"\n") . show . part1) . mapM (fmap rawToHand .
 ------------------ RART 1 ------------------ 
 
 part1 :: [Hand] -> Int
-part1 hs = fst . foldr (\(Hand _ _ bid) (acc, i) -> (bid*i + acc,i-1)) (0, length hs) $ sort hs
+part1 hs = fst . foldr (\(Hand _ _ bid) (acc, i) -> ( bid * i + acc,i-1 )) (0, length hs) $ sort hs
 
 rawToHand ::RawHand -> Hand 
 rawToHand (RawHand cards bid) = Hand (getType cards) cards bid
+
+------------------  SHARED ------------------ 
 
 getType :: Cards -> Type
 getType (Cards a b c d e) 
@@ -55,14 +57,12 @@ data Rank = Two | Three | Four | Five | Six | Seven | Eight| Nine | Ten | Jack| 
 
 ------------------ PARSER ------------------ 
 
-rank :: Parser Rank
-rank = choice [ char '2' $> Two,  char '3' $> Three, char '4' $> Four, char '5' $> Five
-               ,char '6' $> Six,  char '7' $> Seven, char '8' $> Eight,char '9' $> Nine
-               ,char 'T' $> Ten,  char 'J' $> Jack,  char 'Q' $> Queen
-               ,char 'K' $> King, char 'A' $> Ace,   fail "ivalid rank"]
-
 rawHand :: Parser RawHand
-rawHand = RawHand <$> cards <*> (read <$> many1 digit)
-
-cards :: Parser Cards
-cards = Cards <$> rank <*> rank  <*> rank  <*> rank  <*> rank <* spaces
+rawHand = RawHand 
+  <$> (Cards <$> rank <*> rank  <*> rank  <*> rank  <*> rank <* spaces) 
+  <*> (read <$> many1 digit)
+  where rank = choice [ 
+          char '2' $> Two,  char '3' $> Three, char '4' $> Four, char '5' $> Five
+         ,char '6' $> Six,  char '7' $> Seven, char '8' $> Eight,char '9' $> Nine
+         ,char 'T' $> Ten,  char 'J' $> Jack,  char 'Q' $> Queen
+         ,char 'K' $> King, char 'A' $> Ace,   fail "ivalid rank"]
