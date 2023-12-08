@@ -3,7 +3,7 @@
 import Text.Parsec
 import Text.Parsec.String (Parser)
 import Control.Monad (void)
-import Data.List (foldl')
+import Data.List (foldl', insert)
 import System.Environment (getArgs)
 
 main :: IO ()
@@ -31,20 +31,28 @@ rng []  = Right []
 rng [_] = Left "one element list is not a range"
 rng (a:b:xs) = (:) <$> Right (a,b) <*> rng xs
 
-part2 :: Almanak -> Either String [Int]
-part2 (Almanak s m) = (\r -> map fst $ f r m) <$> rng s
+part2 :: Almanak -> Either String Int
+part2 (Almanak s m) = minimum . (\r -> map fst $ f r m) <$> rng s
 
 f :: [(Int, Int)] -> [[Map]] -> [(Int, Int)]
 f ps []       = ps
-f ps (ms:mss) = foldr ( \p acc -> transform p ms ++ acc ) [] ps
+f ps (ms:mss) = foldr (\p acc -> f ( transform p ms ) mss ++ acc  ) [] ps
 
 transform :: (Int, Int) -> [Map] -> [(Int, Int)]
 transform p [] = [p]
-transform (start, len) ((Map dst src rng) : ms)
-  | start >= src && start + len <= src + rng = [(start-src+dst, (start+len)-src+dst)]
-  | start >= src && start + len >= src + rng = (start-src+dst, start-src+dst+rng) : transform (start+rng, len-rng) ms
-  | start <= src && start + len <= src + rng = transform (start, len-src) ms ++ [(src+dst, dst+rng-src-len)]          -- this one might be wrong
-  | otherwise = transform (start, len) ms
+transform (inputStart, inputLen) ((Map dstStart srcStart mapLen) : ms)
+  | isStartInRange  && isEndInRange  = [(convert inputStart, convert inputLen)]
+  | isStartOutRange && isEndOutRange = transform (inputStart, inputLen) ms
+  | isStartOutRange && isEndInRange  = transform (inputStart, srcStart-1) ms ++ [(convert srcStart, convert inputEnd)]
+  | isStartInRange  && isEndOutRange = (convert inputStart, convert srcEnd)   : transform (srcEnd, inputEnd) ms
+  | otherwise = [(-1000, -1000)]
+  where inputEnd        = inputStart + inputLen
+        srcEnd          = srcStart + mapLen
+        convert x       = x - srcStart + dstStart
+        isStartInRange  = inputStart >= srcStart && inputStart <= srcEnd
+        isEndInRange    = inputEnd <= srcEnd && inputEnd >= srcStart
+        isStartOutRange = inputStart < srcStart || inputStart > srcEnd
+        isEndOutRange   = inputEnd > srcEnd || inputEnd < srcStart
 
 ------------------------  MODELS  ----------------------
 
