@@ -46,9 +46,14 @@ My goals on top of just solving the assignements are:
 - [x] Refactor
 - [x] Benchmark
 ### [Day 8](https://github.com/mamaart/AOC2023/tree/main/day8)
-- [ ] [Part 1](https://github.com/mamaart/AOC2023/blob/main/day8/day8.hs)
+- [x] [Part 1](https://github.com/mamaart/AOC2023/blob/main/day8/day8.hs)
 - [ ] [Part 2](https://github.com/mamaart/AOC2023/blob/main/day8/day8.hs)
 - [ ] Refactor
+- [ ] Benchmark
+### [Day 9](https://github.com/mamaart/AOC2023/tree/main/day9)
+- [x] [Part 1](https://github.com/mamaart/AOC2023/blob/main/day9/day9.hs)
+- [x] [Part 2](https://github.com/mamaart/AOC2023/blob/main/day9/day9.hs)
+- [x] Refactor
 - [ ] Benchmark
 
 ## Resources
